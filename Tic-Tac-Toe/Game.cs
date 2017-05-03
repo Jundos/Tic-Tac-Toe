@@ -12,20 +12,21 @@ namespace Tic_Tac_Toe
     {
         Random rnd = new Random();
         Font font = new Font(FontFamily.GenericMonospace.Name, 30);
-        private int[,] pole;
-        private int numberCombination = 0;
+        private ushort[,] pole;
+        private ushort numberCombination = 0, Level = 2, playerMark = 1, computerMark = 2;
+        private string message = null;
         public bool playerControl = true, endGame = false;
 
         public Game()
         {
-            pole = new int[3,3] {
+            pole = new ushort[3, 3] {
                 { 0, 0, 0},
                 { 0, 0, 0},
                 { 0, 0, 0} };
         }
         public void NewGame()
         {
-            pole = new int[3, 3] {
+            pole = new ushort[3, 3] {
                 { 0, 0, 0},
                 { 0, 0, 0},
                 { 0, 0, 0} };
@@ -34,13 +35,16 @@ namespace Tic_Tac_Toe
             playerControl = true;
             endGame = false;
         }
-        private void ComputerMove()
+        private void ComputerMove(ushort Level)
         {
-            while(true)
+            switch (Level)
             {
-                int i = rnd.Next(3), j = rnd.Next(3);
-                if (pole[i, j] == 0){ pole[i, j] = 2; break; } 
+                case 1: if (!winNextMove()) randomNextMove(); break;
+                case 2: if (!winNextMove()) if (!dontLoseNextMove()) randomNextMove(); break;
+                default:
+                    break;
             }
+            
         }
         public void PlayerMove(int clickPositionX, int clickPositionY)
         {
@@ -52,10 +56,10 @@ namespace Tic_Tac_Toe
             if (clickPositionY > 0 && clickPositionY < 100) i = 0;
             if (clickPositionY > 100 && clickPositionY < 200) i = 1;
             if (clickPositionY > 200 && clickPositionY < 300) i = 2;
-            
-            if (pole[i,j] == 0)
+
+            if (pole[i, j] == 0)
             {
-                pole[i, j] = 1;
+                pole[i, j] = playerMark;
                 playerControl = false;
             }
             else { playerControl = true; }
@@ -63,18 +67,35 @@ namespace Tic_Tac_Toe
         public void update(Graphics g)
         {
             drawPole(g);
-            
+
             if (winCombinations() == true)
             {
                 drawWinLine(g);
-                g.DrawString("WIN", font, Brushes.Gold, 100, 120);
+                g.DrawString(message, font, Brushes.Gold, 100, 120);
                 playerControl = false; endGame = true;
             }
             else
             {
                 if (standoff()) { g.DrawString("Standoff", font, Brushes.Black, 40, 130); endGame = true; }
                 else
-                    if (!playerControl) { ComputerMove(); playerControl = true; }
+                    if (!playerControl) { ComputerMove(Level); playerControl = true; }
+            }
+        }
+        public void SetLevel(ushort level)
+        {
+            this.Level = level;
+        }
+        public void ChangeMark()
+        {
+            if (playerMark == 1)
+            {
+                computerMark = playerMark;
+                playerMark = 2;
+            }
+            else
+            {
+                playerMark = computerMark;
+                computerMark = 2;
             }
         }
         private bool winCombinations()
@@ -92,7 +113,7 @@ namespace Tic_Tac_Toe
                         if (pole[i, j] != p) win = false;
                     }
                     this.numberCombination++;
-                    if (win){ return win; }
+                    if (win) { if (p == playerMark) message = "WIN"; else message = "LOSE"; return win; }
                 }
                 // проверка по вертикали
                 for (int i = 0; i < 3; i++)
@@ -103,7 +124,7 @@ namespace Tic_Tac_Toe
                         if (pole[j, i] != p) win = false;
                     }
                     this.numberCombination++;
-                    if (win) { return win; }
+                    if (win) { if (p == playerMark) message = "WIN"; else message = "LOSE"; return win; }
                 }
                 // проверка по диагонали
                 this.numberCombination++;
@@ -112,18 +133,18 @@ namespace Tic_Tac_Toe
                 {
                     if (pole[i, i] != p) win = false;  // "\"
                 }
-                if (win) { return win; }
+                if (win) { if (p == playerMark) message = "WIN"; else message = "LOSE"; return win; }
                 this.numberCombination++;
                 win = true;
                 for (int i = 0; i < 3; i++)
                 {
                     if (pole[i, 2 - i] != p) win = false; // "/"
                 }
-                if (win) { return win; }
+                if (win) { if (p == playerMark) message = "WIN"; else message = "LOSE"; return win; }
             }
             return win;
         }
-        private bool standoff() // ничья
+        private bool standoff()
         {
             for (int i = 0; i < 3; i++)
             {
@@ -133,6 +154,175 @@ namespace Tic_Tac_Toe
                 }
             }
             return true;
+        }
+        private bool dontLoseNextMove()
+        {
+            int count = 2;
+            if (count > 0)
+                // проверка по горизонтали
+                for (int i = 0; i < 3; i++)
+                {
+                    count = 2;
+                    for (int j = 0; j < 3; j++)
+                    {
+                            if (pole[i, j] == playerMark) count--;
+                            else if (pole[i, j] == computerMark) count++;
+                    }
+                    if (count == 0)
+                    {
+                        for (int k = 0; k < 3; k++)
+                            if (pole[i, k] == 0)
+                            {
+                                pole[i, k] = computerMark;
+                                break;
+                            }
+                        return true;
+                    }
+                }
+
+            if (count > 0)
+                // проверка по вертикали
+                for (int i = 0; i < 3; i++)
+                {
+                    count = 2;
+                    for (int j = 0; j < 3; j++)
+                    {
+                            if (pole[j, i] == playerMark) count--;
+                            else if (pole[j, i] == computerMark) count++;
+                    }
+                    if (count == 0)
+                    {
+                        for (int k = 0; k < 3; k++)
+                            if (pole[k, i] == 0)
+                            {
+                                pole[k, i] = computerMark;
+                                break;
+                            }
+                        return true;
+                    }
+                }
+
+            if (count > 0)
+            {
+                // проверка по диагонали "\"
+                count = 2;
+                for (int i = 0; i < 3; i++)
+                        if (pole[i, i] == playerMark) count--;
+                        else if (pole[i, i] == computerMark) count++; 
+                if (count == 0)
+                    for (int k = 0; k < 3; k++)
+                        if (pole[k, k] == 0)
+                        {
+                            pole[k, k] = computerMark;
+                            return true;
+                        }
+            }
+
+            if (count > 0)
+            {
+                // проверка по диагонали "/"
+                count = 2;
+                for (int i = 0; i < 3; i++)
+                        if (pole[i, 2 - i] == playerMark) count--;
+                        else if (pole[i, 2 - i] == computerMark) count++;
+                if (count == 0)
+                    for (int k = 0; k < 3; k++)
+                        if (pole[k, 2 - k] == 0)
+                        {
+                            pole[k, 2 - k] = computerMark;
+                            return true;
+                        }
+            }
+            return false;
+        }
+        private bool winNextMove()
+        {
+            int count = 2;
+            if (count > 0)
+                // проверка по горизонтали
+                for (int i = 0; i < 3; i++)
+                {
+                    count = 2;
+                    for (int j = 0; j < 3; j++)
+                    {
+                        if (pole[i, j] == computerMark) count--;
+                        else if (pole[i, j] == playerMark) count++;
+                    }
+                    if (count == 0)
+                    {
+                        for (int k = 0; k < 3; k++)
+                            if (pole[i, k] == 0)
+                            {
+                                pole[i, k] = computerMark;
+                                break;
+                            }
+                        return true;
+                    }
+                }
+
+            if (count > 0)
+                // проверка по вертикали
+                for (int i = 0; i < 3; i++)
+                {
+                    count = 2;
+                    for (int j = 0; j < 3; j++)
+                    {
+                        if (pole[j, i] == computerMark) count--;
+                        else if (pole[j, i] == playerMark) count++;
+                    }
+                    if (count == 0)
+                    {
+                        for (int k = 0; k < 3; k++)
+                            if (pole[k, i] == 0)
+                            {
+                                pole[k, i] = computerMark;
+                                break;
+                            }
+                        return true;
+                    }
+                }
+
+            if (count > 0)
+            {
+                // проверка по диагонали "\"
+                count = 2;
+                for (int i = 0; i < 3; i++)
+                    if (pole[i, i] == computerMark) count--;
+                    else if (pole[i, i] == playerMark) count++;
+                if (count == 0)
+                    for (int k = 0; k < 3; k++)
+                        if (pole[k, k] == 0)
+                        {
+                            pole[k, k] = computerMark;
+                            return true;
+                        }
+            }
+
+
+            if (count > 0)
+            {
+                // проверка по диагонали "/"
+                count = 2;
+                for (int i = 0; i < 3; i++)
+                    if (pole[i, 2 - i] == computerMark) count--;
+                    else if (pole[i, 2 - i] == playerMark) count++;
+                if (count == 0)
+                    for (int k = 0; k < 3; k++)
+                        if (pole[k, 2 - k] == 0)
+                        {
+                            pole[k, 2 - k] = computerMark;
+                            return true;
+                        }
+            }
+            return false;
+        }
+        private void randomNextMove()
+        {
+            while (true)
+            {
+                int i = rnd.Next(3), j = rnd.Next(3);
+                if (pole[i, j] == 0) { pole[i, j] = computerMark; break; }
+            }
         }
         private void drawPole(Graphics g)
         {
@@ -190,7 +380,7 @@ namespace Tic_Tac_Toe
                     break;
             }
             Pen p = new Pen(Color.Green, 9);
-            g.DrawEllipse(p, j+15, i+15, 70, 70);
+            g.DrawEllipse(p, j + 15, i + 15, 70, 70);
         }
         private void drawWinLine(Graphics g)
         {

@@ -50,5 +50,26 @@ namespace Tic_Tac_Toe
             game.NewGame();
             game.update(g);
         }
+
+        private void lowToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            game.SetLevel(1);
+            game.NewGame();
+            game.update(g);
+        }
+
+        private void middleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            game.SetLevel(2);
+            game.NewGame();
+            game.update(g);
+        }
+
+        private void changeMarkToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            game.ChangeMark();
+            game.NewGame();
+            game.update(g);
+        }
     }
 }
