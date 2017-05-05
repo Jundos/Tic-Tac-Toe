@@ -32,15 +32,17 @@ namespace Tic_Tac_Toe
                 { 0, 0, 0} };
 
             numberCombination = 0;
-            playerControl = true;
+ //           playerControl = false;
             endGame = false;
+            message = null;
         }
         private void ComputerMove(ushort Level)
         {
             switch (Level)
             {
-                case 1: if (!winNextMove()) randomNextMove(); break;
-                case 2: if (!winNextMove()) if (!dontLoseNextMove()) randomNextMove(); break;
+                case 1: if (!winNextMove()) randomMove(); break;
+                case 2: if (!winNextMove()) if (!dontLoseNextMove()) randomMove(); break;
+                case 3: if (!winNextMove()) if (!dontLoseNextMove()) if (!centerMove()) if (!cornerMove()) randomMove(); break; 
                 default:
                     break;
             }
@@ -67,25 +69,32 @@ namespace Tic_Tac_Toe
         public void update(Graphics g)
         {
             drawPole(g);
-
-            if (winCombinations() == true)
+            if (winCombinations())
             {
+                drawPole(g);
                 drawWinLine(g);
                 g.DrawString(message, font, Brushes.Gold, 100, 120);
-                playerControl = false; endGame = true;
+                endGame = true;
             }
             else
             {
-                if (standoff()) { g.DrawString("Standoff", font, Brushes.Black, 40, 130); endGame = true; }
+                if (standoff())
+                {
+                    g.DrawString("Standoff", font, Brushes.Black, 40, 130);
+                    endGame = true;
+                    if (playerMark == 1) playerControl = true; else playerControl = false;
+                }
                 else
-                    if (!playerControl) { ComputerMove(Level); playerControl = true; }
+                if (!endGame)
+                    if (!playerControl) { ComputerMove(Level); playerControl = true; drawPole(g); }
             }
+            
         }
         public void SetLevel(ushort level)
         {
             this.Level = level;
         }
-        public void ChangeMark()
+        private void ChangeMark()
         {
             if (playerMark == 1)
             {
@@ -113,7 +122,28 @@ namespace Tic_Tac_Toe
                         if (pole[i, j] != p) win = false;
                     }
                     this.numberCombination++;
-                    if (win) { if (p == playerMark) message = "WIN"; else message = "LOSE"; return win; }
+                    if (win)
+                    {
+                        if (p == playerMark)
+                        {
+                            if (!endGame)
+                            {
+                                if (playerMark == 2) ChangeMark();
+                                playerControl = true;
+                                message = "WIN";
+                            }
+                        }
+                        else
+                        {
+                            if (!endGame)
+                            {
+                                if (playerMark == 1) ChangeMark();
+                                playerControl = false;
+                                message = "LOSE";
+                            }
+                        }
+                        return win;
+                    }
                 }
                 // проверка по вертикали
                 for (int i = 0; i < 3; i++)
@@ -124,7 +154,28 @@ namespace Tic_Tac_Toe
                         if (pole[j, i] != p) win = false;
                     }
                     this.numberCombination++;
-                    if (win) { if (p == playerMark) message = "WIN"; else message = "LOSE"; return win; }
+                    if (win)
+                    {
+                        if (p == playerMark)
+                        {
+                            if (!endGame)
+                            {
+                                if (playerMark == 2) ChangeMark();
+                                playerControl = true;
+                                message = "WIN";
+                            }
+                        }
+                        else
+                        {
+                            if (!endGame)
+                            {
+                                if (playerMark == 1) ChangeMark();
+                                playerControl = false;
+                                message = "LOSE";
+                            }
+                        }
+                        return win;
+                    }
                 }
                 // проверка по диагонали
                 this.numberCombination++;
@@ -133,14 +184,56 @@ namespace Tic_Tac_Toe
                 {
                     if (pole[i, i] != p) win = false;  // "\"
                 }
-                if (win) { if (p == playerMark) message = "WIN"; else message = "LOSE"; return win; }
+                if (win)
+                {
+                    if (p == playerMark)
+                    {
+                        if (!endGame)
+                        {
+                            if (playerMark == 2) ChangeMark();
+                            playerControl = true;
+                            message = "WIN";
+                        }
+                    }
+                    else
+                    {
+                        if (!endGame)
+                        {
+                            if (playerMark == 1) ChangeMark();
+                            playerControl = false;
+                            message = "LOSE";
+                        }
+                    }
+                    return win;
+                }
                 this.numberCombination++;
                 win = true;
                 for (int i = 0; i < 3; i++)
                 {
                     if (pole[i, 2 - i] != p) win = false; // "/"
                 }
-                if (win) { if (p == playerMark) message = "WIN"; else message = "LOSE"; return win; }
+                if (win)
+                {
+                    if (p == playerMark)
+                    {
+                        if (!endGame)
+                        {
+                            if (playerMark == 2) ChangeMark();
+                            playerControl = true;
+                            message = "WIN";
+                        }
+                    }
+                    else
+                    {
+                        if (!endGame)
+                        {
+                            if (playerMark == 1) ChangeMark();
+                            playerControl = false;
+                            message = "LOSE";
+                        }
+                    }
+                    return win;
+                }
             }
             return win;
         }
@@ -316,7 +409,37 @@ namespace Tic_Tac_Toe
             }
             return false;
         }
-        private void randomNextMove()
+        private bool cornerMove()
+        {
+            // если хоть один из углов пустой, то случайным порядком заполняем его
+            if (pole[0,0] == 0 || pole[0,2] == 0 || pole[2,0] == 0 || pole[2,2] == 0)
+            {
+                while (true)
+                {
+                    int i = rnd.Next(3), j = rnd.Next(3);
+                    if ((i == 0 || i == 2) && (j == 0 || j == 2))
+                    {
+                        if (pole[i, j] == 0)
+                        {
+                            pole[i, j] = computerMark;
+                            break;
+                        }
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+        private bool centerMove()
+        {
+            if (pole[1,1] == 0)
+            {
+                pole[1, 1] = computerMark;
+                return true;
+            }
+            return false;
+        }
+        private void randomMove()
         {
             while (true)
             {

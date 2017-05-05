@@ -35,7 +35,6 @@
             this.lowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.middleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.changeMarkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -55,8 +54,7 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newGameToolStripMenuItem,
-            this.levelToolStripMenuItem,
-            this.changeMarkToolStripMenuItem});
+            this.levelToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(319, 24);
@@ -72,6 +70,7 @@
             // 
             // levelToolStripMenuItem
             // 
+            this.levelToolStripMenuItem.CheckOnClick = true;
             this.levelToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.lowToolStripMenuItem,
             this.middleToolStripMenuItem,
@@ -82,30 +81,29 @@
             // 
             // lowToolStripMenuItem
             // 
+            this.lowToolStripMenuItem.CheckOnClick = true;
             this.lowToolStripMenuItem.Name = "lowToolStripMenuItem";
-            this.lowToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.lowToolStripMenuItem.Size = new System.Drawing.Size(111, 22);
             this.lowToolStripMenuItem.Text = "Low";
             this.lowToolStripMenuItem.Click += new System.EventHandler(this.lowToolStripMenuItem_Click);
             // 
             // middleToolStripMenuItem
             // 
+            this.middleToolStripMenuItem.Checked = true;
+            this.middleToolStripMenuItem.CheckOnClick = true;
+            this.middleToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.middleToolStripMenuItem.Name = "middleToolStripMenuItem";
-            this.middleToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.middleToolStripMenuItem.Size = new System.Drawing.Size(111, 22);
             this.middleToolStripMenuItem.Text = "Middle";
             this.middleToolStripMenuItem.Click += new System.EventHandler(this.middleToolStripMenuItem_Click);
             // 
             // hardToolStripMenuItem
             // 
+            this.hardToolStripMenuItem.CheckOnClick = true;
             this.hardToolStripMenuItem.Name = "hardToolStripMenuItem";
-            this.hardToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.hardToolStripMenuItem.Size = new System.Drawing.Size(111, 22);
             this.hardToolStripMenuItem.Text = "Hard";
-            // 
-            // changeMarkToolStripMenuItem
-            // 
-            this.changeMarkToolStripMenuItem.Name = "changeMarkToolStripMenuItem";
-            this.changeMarkToolStripMenuItem.Size = new System.Drawing.Size(90, 20);
-            this.changeMarkToolStripMenuItem.Text = "Change mark";
-            this.changeMarkToolStripMenuItem.Click += new System.EventHandler(this.changeMarkToolStripMenuItem_Click);
+            this.hardToolStripMenuItem.Click += new System.EventHandler(this.hardToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -119,6 +117,7 @@
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.ShowIcon = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Tic Tac Toe";
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -133,10 +132,9 @@
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem newGameToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem levelToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem lowToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem middleToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem hardToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem changeMarkToolStripMenuItem;
+        protected System.Windows.Forms.ToolStripMenuItem middleToolStripMenuItem;
+        protected System.Windows.Forms.ToolStripMenuItem hardToolStripMenuItem;
+        protected System.Windows.Forms.ToolStripMenuItem lowToolStripMenuItem;
     }
 }
 

@@ -33,10 +33,10 @@ namespace Tic_Tac_Toe
                 // координаты относительно панели "panel1"
                 int clickPositionX = MousePosition.X - this.Left - panel1.Left - 8, // 8 толщина рамки слева
                     clickPositionY = MousePosition.Y - this.Top - panel1.Top - 31; // 31 толщина рамки вверху
-                game.PlayerMove(clickPositionX, clickPositionY);
+                if (!game.endGame)
+                    game.PlayerMove(clickPositionX, clickPositionY);
             }
-            if (game.endGame) game.NewGame();
-            game.update(g);
+            if(!game.endGame) game.update(g);
             
         }
             // возникает после клика мышки
@@ -53,6 +53,9 @@ namespace Tic_Tac_Toe
 
         private void lowToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            lowToolStripMenuItem.Checked = true;
+            middleToolStripMenuItem.Checked = false;
+            hardToolStripMenuItem.Checked = false;
             game.SetLevel(1);
             game.NewGame();
             game.update(g);
@@ -60,16 +63,23 @@ namespace Tic_Tac_Toe
 
         private void middleToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            lowToolStripMenuItem.Checked = false;
+            middleToolStripMenuItem.Checked = true;
+            hardToolStripMenuItem.Checked = false;
             game.SetLevel(2);
             game.NewGame();
             game.update(g);
         }
 
-        private void changeMarkToolStripMenuItem_Click(object sender, EventArgs e)
+        private void hardToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            game.ChangeMark();
+            lowToolStripMenuItem.Checked = false;
+            middleToolStripMenuItem.Checked = false;
+            hardToolStripMenuItem.Checked = true;
+            game.SetLevel(3);
             game.NewGame();
             game.update(g);
         }
+
     }
 }
